@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.longya.dao.TbItemCountMapper" >
+
+  <sql id="Base_Column_List" >
+    a.id, a.title, a.sell_point as sellPoint, a.price, a.num, a.barcode, a.image, a.cid, a.status,a.created,a.updated
+    ,b.name as catName
+  </sql>
+
+   <sql id="Where_Clause">
+       where a.status!=3
+       <if test="query != null and query.title!=null and query.title!=''">
+           and a.title like '%${query.title}%'
+       </if>
+       <if  test="query != null and query.status!=null and query.status!=0">
+           and a.status = #{query.status}
+       </if>
+   </sql>
+
+  <select id="countTbItem" resultType="_long">
+    select count(*)
+    FROM tb_item a
+    <include refid="Where_Clause"/>
+  </select>
+
+  <select id="listTbItemsByPage" parameterType="com.hdc.ddshop.dto.Page" resultType="com.longya.pojo.vo.TbItemCount">
+     select
+             <include refid="Base_Column_List"/>
+      from tb_item a
+      LEFT JOIN tb_item_cat b ON a.cid = b.id
+      <include refid="Where_Clause"/>
+      <choose>
+          <when test="order!=null and order.sort!=null and order.order!=null and order.sorts!=null">
+              <foreach collection="order.sorts" item="item" open="ORDER BY" close="" separator=",">
+                  a.${item}
+              </foreach>
+          </when>
+          <otherwise>
+              ORDER BY a.id DESC
+          </otherwise>
+      </choose>
+      LIMIT #{page.offset},#{page.rows}
+  </select>
+
+</mapper>

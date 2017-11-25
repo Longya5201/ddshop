@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="dd-common:war">
-    <output-path>$PROJECT_DIR$/dd-common/target</output-path>
-    <root id="archive" name="dd-common.war">
-      <element id="artifact" artifact-name="dd-common:war exploded" />
-    </root>
-  </artifact>
-</component>
